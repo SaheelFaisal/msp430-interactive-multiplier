@@ -1,5 +1,9 @@
 # MSP430 Interactive Hardware Multiplier
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fff1ae07-0aba-44a8-9c65-669297008568" alt="MSP430 LaunchPad" width="500"/>
+</p>
+
 ## Overview
 This repository contains a bare-metal interactive hardware multiplier developed entirely in pure Assembly for the Texas Instruments MSP430FR6989. It interfaces with a custom ECE daughter board to create a complete, real-time hardware user interface. Users set hexadecimal operands (0x00 to 0xFF) via an analog potentiometer, use tactile push buttons to load the specific operands into memory, and trigger a hardware-accelerated multiplication. All current states, loaded operands, and final 16-bit products are dynamically multiplexed to a 4-digit 7-segment display.
 
