@@ -48,30 +48,30 @@ graph TD
     Port3 -- "Pins P3.0 - P3.3" --> Disp
 ```
 
-## Firmware Highlight: Hardware Multiplication & Digit Separation
-To maintain high performance, the firmware bypasses software multiplication routines. Instead, it feeds raw ADC values into the hardware multiplier. The resulting 16-bit product is separated into individual decimal digits using highly optimized bitwise masking and right-shift rotations, preparing it for the multiplexed display output.
+## Firmware Highlight: Hardware Multiplication & Data Parsing
+To maintain deterministic performance, the firmware bypasses standard software multiplication. Instead, the ADC values are loaded directly into the MSP430's memory-mapped hardware multiplier registers (`&MPY` and `&OP2`). The resulting 16-bit product (`&RES0`) is immediately parsed into four individual hexadecimal nibbles using optimized bitwise masking and arithmetic right-shifts, preparing the data for the multiplexed 7-segment display.
 
 ```assembly
-SEP_PROD:   mov            R4            ,        4(R13)
+MULTIPLY:   mov            2(R13)        ,        &MPY          ; Load Operand 1 into HW Multiplier
+            mov            0(R13)        ,        &OP2          ; Load Operand 2 into HW Multiplier
+            mov            &RES0         ,        R4            ; Fetch 16-bit hardware-calculated product
+            jmp            SEP_PROD
+
+SEP_PROD:   mov            R4            ,        4(R13)        ; Copy product for parsing
             mov            R4            ,        6(R13)
             mov            R4            ,        8(R13)
             mov            R4            ,        10(R13)
 
-            and            #0x000F       ,        4(R13)        ; Isolate First Digit
-            and            #0x00F0       ,        6(R13)        ; Isolate Second Digit
-            and            #0x0F00       ,        8(R13)        ; Isolate Third Digit
-            and            #0xF000       ,        10(R13)       ; Isolate Fourth Digit
+            and            #0x000F       ,        4(R13)        ; Isolate Nibble 1 (LSB)
+            and            #0x00F0       ,        6(R13)        ; Isolate Nibble 2
+            and            #0x0F00       ,        8(R13)        ; Isolate Nibble 3
+            and            #0xF000       ,        10(R13)       ; Isolate Nibble 4 (MSB)
 
-            ;--------- Executing Arithmetic Shifts --------
+            ;--------- Shift Nibbles to LSB for Display Routing --------
             mov            #0x04         ,        R14
 loop1:      rra            6(R13)
             dec            R14
             jnz            loop1
-            
-            mov            #0x08         ,        R14
-loop2:      rra            8(R13)
-            dec            R14
-            jnz            loop2
 ```
 
 ## Development & Debugging Tools
