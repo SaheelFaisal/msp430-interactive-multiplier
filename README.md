@@ -26,26 +26,26 @@ The system relies on a custom daughter board mapped directly to the MSP430 GPIO 
 
 ```mermaid
 graph TD
-    subgraph MSP-EXP430FR6989 (Assembly / Bare-Metal)
-        ADC[12-bit ADC <br> Pin: P8.4]
-        Timer[Timer A0 <br> ISR Controller]
-        Core[CPU Core <br> Hardware Multiplier]
-        Port2[Port 2 <br> Segment Control]
-        Port3[Port 3 <br> Digit Multiplexer]
+    subgraph MCU ["MSP-EXP430FR6989 (Assembly / Bare-Metal)"]
+        ADC["12-bit ADC <br> Pin: P8.4"]
+        Timer["Timer A0 <br> ISR Controller"]
+        Core["CPU Core <br> Hardware Multiplier"]
+        Port2["Port 2 <br> Segment Control"]
+        Port3["Port 3 <br> Digit Multiplexer"]
     end
 
-    subgraph Custom Daughter Board
-        Pot[Analog Potentiometer]
-        Disp[4-Digit 7-Segment Display]
+    subgraph Board ["Custom Daughter Board"]
+        Pot["Analog Potentiometer"]
+        Disp["4-Digit 7-Segment Display"]
     end
 
-    Pot -- Analog Voltage --> ADC
-    ADC -- Converted Data --> Core
-    Timer -- Interrupt Triggers --> Core
-    Core -- Segment Data --> Port2
-    Core -- Digit Select --> Port3
-    Port2 -- Pins P2.0 - P2.7 --> Disp
-    Port3 -- Pins P3.0 - P3.3 --> Disp
+    Pot -- "Analog Voltage" --> ADC
+    ADC -- "Converted Data" --> Core
+    Timer -- "Interrupt Triggers" --> Core
+    Core -- "Segment Data" --> Port2
+    Core -- "Digit Select" --> Port3
+    Port2 -- "Pins P2.0 - P2.7" --> Disp
+    Port3 -- "Pins P3.0 - P3.3" --> Disp
 ```
 
 ## Firmware Highlight: Hardware Multiplication & Digit Separation
